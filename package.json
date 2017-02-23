@@ -18,6 +18,7 @@
     "decyphertv"
   ],
   "bin": {
+    "decypher": "./index.js",
     "decyphertv": "./index.js"
   },
   "engines": {

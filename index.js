@@ -22,7 +22,7 @@ global.decypher.program = program
 
 switch(decypher.program.mode) {
   case "testrpc":
-    console.log(chalk.bold.cyan(`Starting Acrux...`));
+    console.log(chalk.bold.cyan(`Starting Decypher...`));
 
     // Declare Constants
     global.solc = require('solc');
@@ -112,19 +112,18 @@ switch(decypher.program.mode) {
     prompt.start();
 
     prompt.get([{name: 'privateKey', hidden: true}], (error, result) => {
-      console.log(chalk.bold.cyan(`Starting Acrux...`));
+      console.log(chalk.bold.cyan(`Starting Decypher...`));
 
       // Declare Constants
       global.decypher.privateKey = result.privateKey;
+      global.decypher.privateKeyx = new Buffer(global.decypher.privateKey, 'hex');
       global.solc = require('solc');
       global.EthTx = require('ethereumjs-tx');
       global.EthUtil = require('ethereumjs-util');
       global.Web3 = require("web3");
       global.lodash = require("lodash");
       global.SolidityFunction = require("web3/lib/web3/function");
-
-      global.acct = `0x${EthUtil.privateToAddress(hexToBytes(global.decypher.privateKey)).toString('hex')}`;
-      global.decypherPrivateKeyx = new Buffer(global.decypher.privateKey, 'hex');
+      global.decypher.acct = `0x${EthUtil.privateToAddress(hexToBytes(global.decypher.privateKey)).toString('hex')}`;
       global.web3 = new Web3(new Web3.providers.HttpProvider(`https://ropsten.infura.io/${global.decypher.infuraKey}`));
 
       global.decypher.contractName = (source) => {
@@ -148,6 +147,47 @@ switch(decypher.program.mode) {
         }
       }
 
+      global.decypher.createContract = (source, params=[], options={}) => {
+        if(global.decypher.contractName(source)) {
+          contractSource = source;
+        } else {
+          contractSource = fs.readFileSync(source, 'utf8');
+        }
+
+        var compiled = solc.compile(contractSource);
+        var contractName = global.decypher.contractName(contractSource);
+        var bytecode = compiled["contracts"][`:${contractName}`]["bytecode"];
+        var abi = JSON.parse(compiled["contracts"][`:${contractName}`]["interface"])
+        var contract = global.web3.eth.contract(abi)
+        var contractData = `0x${contract.new.getData(...params, {data: bytecode})}`
+
+        var callback = (error, result) => {
+          if(error) {
+            console.log(chalk.red("Error Creating Contract"))
+            console.log(error)
+          } else {
+            console.log("...")
+            console.log(chalk.green(`deploying contract ${contractName}`))
+            console.log(chalk.yellow(`https://testnet.etherscan.io/address/${global.decypher.acct}`))
+          }
+        }
+
+        var rawTx = {
+          nonce: global.web3.toHex(global.web3.eth.getTransactionCount(global.decypher.acct)),
+          from: global.decypher.acct,
+          data: contractData,
+          gasLimit: global.web3.toHex(options.gas || (global.web3.eth.estimateGas({ data: contractData }) * 1.05)),
+          gasPrice: global.web3.toHex(options.gasPrice || global.web3.eth.gasPrice)
+        }
+
+        var tx = new global.EthTx(rawTx)
+        tx.sign(global.decypher.privateKeyx)
+        var txData = tx.serialize().toString('hex')
+
+        global.web3.eth.sendRawTransaction(`0x${txData}`, callback)
+        return contract
+      }
+
       global.decypher.callContract = () => {
         var deployed = arguments['0'].deployed
         var methodName  = arguments['0'].methodName
@@ -157,16 +197,16 @@ switch(decypher.program.mode) {
         var payloadData = solidityFunction.toPayload(params).data
 
         var rawTx = {
-          nonce: global.web3.toHex(global.web3.eth.getTransactionCount(global.acct)),
+          nonce: global.web3.toHex(global.web3.eth.getTransactionCount(global.decypher.acct)),
           gasPrice: global.web3.toHex(arguments['0'].gasPrice || global.web3.eth.gasPrice),
           gasLimit: global.web3.toHex(arguments['0'].gas || 300000),
           to: deployed.address,
-          from: global.acct,
+          from: global.decypher.acct,
           data: payloadData
         }
 
         var tx = new global.EthTx(rawTx)
-        tx.sign(global.decypherPrivateKeyx)
+        tx.sign(global.decypher.privateKeyx)
         var txData = tx.serialize().toString('hex')
 
         global.web3.eth.sendRawTransaction(`0x${txData}`, (error, txHash) => {
@@ -188,6 +228,6 @@ switch(decypher.program.mode) {
     break;
 
     default:
-      console.log("Unknown Mode...");
+      console.log(chalk.red(`Unknown Mode: '${decypher.program.mode}' - Valid modes are [testrpc, ropsten]`))
       break;
 }
