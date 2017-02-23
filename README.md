@@ -7,9 +7,11 @@ A simple library for interacting with the Ethereum blockchain without needing to
 This library is going to be changing constantly, however there will be a snapshot of the current state of the library at the time each episode was recorded available.
 
 To install the specific version used in an episode
+
 `npm install -g decyphertv@0.1.{episodeNumber}`
 
 To simply install the latest version
+
 `npm install -g decyphertv`
 
 ## Usage
