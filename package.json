@@ -1,6 +1,6 @@
 {
   "name": "decyphertv",
-  "version": "0.1.14-beta",
+  "version": "0.1.14",
   "description": "CLI for helper libraries to follow along with the decypher.tv ethereum screencast series",
   "main": "index.js",
   "scripts": {

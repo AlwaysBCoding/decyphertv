@@ -176,7 +176,7 @@ switch(decypher.program.mode) {
           nonce: global.web3.toHex(global.web3.eth.getTransactionCount(global.decypher.acct)),
           from: global.decypher.acct,
           data: contractData,
-          gasLimit: global.web3.toHex(options.gas || (global.web3.eth.estimateGas({ data: contractData }) * 1.05)),
+          gasLimit: global.web3.toHex(options.gas || global.web3.eth.estimateGas({ data: contractData })),
           gasPrice: global.web3.toHex(options.gasPrice || global.web3.eth.gasPrice)
         }
 
