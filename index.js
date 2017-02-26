@@ -50,6 +50,17 @@ switch(decypher.program.mode) {
       }
     }
 
+    global.decypher.opcodes = (source) => {
+      if(global.decypher.contractName(source)) {
+        contractSource = source;
+      } else {
+        contractSource = fs.readFileSync(source, 'utf8');
+      }
+      var compiled = solc.compile(contractSource);
+      var contractName = global.decypher.contractName(contractSource);
+      return compiled["contracts"][`:${contractName}`]["opcodes"]
+    }
+
     global.decypher.etherBalance = (contract) => {
       switch(typeof(contract)) {
         case "object":
@@ -130,6 +141,17 @@ switch(decypher.program.mode) {
         var re1 = /contract.*{/g
         var re2 = /\s\w+\s/
         return source.match(re1).pop().match(re2)[0].trim()
+      }
+
+      global.decypher.opcodes = (source) => {
+        if(global.decypher.contractName(source)) {
+          contractSource = source;
+        } else {
+          contractSource = fs.readFileSync(source, 'utf8');
+        }
+        var compiled = solc.compile(contractSource);
+        var contractName = global.decypher.contractName(contractSource);
+        return compiled["contracts"][`:${contractName}`]["opcodes"]
       }
 
       global.decypher.etherBalance = (contract) => {
