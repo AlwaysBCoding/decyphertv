@@ -1,14 +1,16 @@
+var chalk = require("chalk");
+var solc = require("solc");
+var EthTx = require("ethereumjs-tx");
+var EthUtil = require("ethereumjs-util");
+var fs = require("fs");
+var lodash = require("lodash");
+
 class Remote {
 
-  constructor({privateKey, solc, EthTx, EthUtil, fs, lodash, web3}) {
+  constructor({privateKey, web3}) {
     this.privateKey = privateKey;
     this.privateKeyx = new Buffer(privateKey, 'hex');
-    this.acct = EthUtil.privateToAddress(privateKey).toString('hex');
-    this.solc = solc;
-    this.EthTx = EthTx;
-    this.EthUtil = EthUtil;
-    this.fs = fs;
-    this.lodash = lodash;
+    this.acct = "0x" + EthUtil.privateToAddress("0x" + privateKey).toString('hex');
     this.web3 = web3;
   }
 
@@ -28,9 +30,9 @@ class Remote {
     if(this.contractName(source)) {
       contractSource = source;
     } else {
-      contractSource = this.fs.readFileSync(source, 'utf8');
+      contractSource = fs.readFileSync(source, 'utf8');
     }
-    var compiled = this.solc.compile(contractSource);
+    var compiled = solc.compile(contractSource);
     var contractName = this.contractName(contractSource);
     return compiled["contracts"][`:${contractName}`]["opcodes"];
   }
@@ -56,15 +58,15 @@ class Remote {
     return bytes;
   }
 
-  createContract(source, params=[], options={}) => {
+  createContract(source, params=[], options={}) {
     var contractSource;
     if(this.contractName(source)) {
       contractSource = source;
     } else {
-      contractSource = this.fs.readFileSync(source, 'utf8');
+      contractSource = fs.readFileSync(source, 'utf8');
     }
 
-    var compiled = this.solc.compile(contractSource);
+    var compiled = solc.compile(contractSource);
     var contractName = this.contractName(contractSource);
     var bytecode = compiled["contracts"][`:${contractName}`]["bytecode"];
     var abi = JSON.parse(compiled["contracts"][`:${contractName}`]["interface"])
@@ -90,7 +92,7 @@ class Remote {
       gasPrice: this.web3.toHex(options.gasPrice || this.web3.eth.gasPrice)
     }
 
-    var tx = new this.EthTx(rawTx)
+    var tx = new EthTx(rawTx)
     tx.sign(this.privateKeyx)
     var txData = tx.serialize().toString('hex')
 

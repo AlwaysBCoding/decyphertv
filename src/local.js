@@ -1,11 +1,13 @@
+var chalk = require("chalk");
+var solc = require("solc");
+var EthTx = require("ethereumjs-tx");
+var EthUtil = require("ethereumjs-util");
+var fs = require("fs");
+var lodash = require("lodash");
+
 class Local {
 
-  constructor({solc, EthTx, EthUtil, fs, lodash, web3}) {
-    this.solc = solc;
-    this.EthTx = EthTx;
-    this.EthUtil = EthUtil;
-    this.fs = fs;
-    this.lodash = lodash;
+  constructor({web3}) {
     this.web3 = web3;
   }
 
@@ -25,9 +27,9 @@ class Local {
     if(this.contractName(source)) {
       contractSource = source;
     } else {
-      contractSource = this.fs.readFileSync(source, 'utf8');
+      contractSource = fs.readFileSync(source, 'utf8');
     }
-    var compiled = this.solc.compile(contractSource);
+    var compiled = solc.compile(contractSource);
     var contractName = this.contractName(contractSource);
     return compiled["contracts"][`:${contractName}`]["opcodes"];
   }
@@ -52,9 +54,9 @@ class Local {
     if(this.contractName(source)) {
       contractSource = source;
     } else {
-      contractSource = this.fs.readFileSync(source, 'utf8');
+      contractSource = fs.readFileSync(source, 'utf8');
     }
-    var compiled = this.solc.compile(contractSource)
+    var compiled = solc.compile(contractSource)
     var contractName = this.contractName(contractSource)
     var bytecode = compiled["contracts"][`:${contractName}`]["bytecode"]
     var abi = JSON.parse(compiled["contracts"][`:${contractName}`]["interface"])

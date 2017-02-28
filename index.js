@@ -28,15 +28,7 @@ switch(program.mode) {
     global.acct5 = web3.eth.accounts[4];
 
     var Decypher = require("./src/local");
-    global.decypher = new Decypher({
-      solc: global.solc,
-      EthTx: global.EthTx,
-      EthUtil: global.EthUtil,
-      fs: global.fs,
-      lodash: global.lodash,
-      Web3: global.Web3,
-      web3: global.web3
-    });
+    global.decypher = new Decypher({ web3: global.web3 });
 
     require('repl').start({});
     break;
@@ -56,16 +48,7 @@ switch(program.mode) {
       global.web3 = new Web3(new Web3.providers.HttpProvider(`${program.endpoint}`))
 
       var Decypher = require("./src/remote");
-      global.decypher = new Decypher({
-        privateKey: result.privateKey,
-        solc: global.solc,
-        EthTx: global.EthTx,
-        EthUtil: global.EthUtil,
-        fs: global.fs,
-        lodash: global.lodash,
-        Web3: global.Web3,
-        web3: global.web3
-      });
+      global.decypher = new Decypher({ privateKey: result.privateKey, web3: global.web3 });
 
       require('repl').start({});
     })
