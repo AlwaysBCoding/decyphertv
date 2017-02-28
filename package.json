@@ -37,5 +37,8 @@
   },
   "devDependencies": {
     "jest-cli": "^19.0.2"
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }
