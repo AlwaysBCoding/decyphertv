@@ -58,6 +58,33 @@ class Remote {
     return bytes;
   }
 
+  sendEther({to, value}, options={}) {
+    var callback = (error, result) => {
+      if(error) {
+        console.log(chalk.red("Error Sending Ether"))
+        console.log(error)
+      } else {
+        console.log("...")
+        console.log(chalk.green(`sent ${this.web3.fromWei(value).toString()} ETH to ${to}`))
+      }
+    }
+
+    var rawTx = {
+      nonce: this.web3.toHex(this.web3.eth.getTransactionCount(this.acct)),
+      from: this.acct,
+      to: to,
+      value: web3.toHex(value),
+      gasLimit: web3.toHex(21000),
+      gasPrice: this.web3.toHex(options.gasPrice || this.web3.eth.gasPrice)
+    }
+
+    var tx = new EthTx(rawTx)
+    tx.sign(this.privateKeyx)
+    var txData = tx.serialize().toString('hex')
+
+    this.web3.eth.sendRawTransaction(`0x${txData}`, callback)
+  }
+
   createContract(source, params=[], options={}) {
     var contractSource;
     if(this.contractName(source)) {
@@ -88,7 +115,7 @@ class Remote {
       nonce: this.web3.toHex(this.web3.eth.getTransactionCount(this.acct)),
       from: this.acct,
       data: contractData,
-      gasLimit: this.web3.toHex(options.gas || tihs.web3.eth.estimateGas({ data: contractData })),
+      gasLimit: this.web3.toHex(options.gas || this.web3.eth.estimateGas({ data: contractData })),
       gasPrice: this.web3.toHex(options.gasPrice || this.web3.eth.gasPrice)
     }
 
