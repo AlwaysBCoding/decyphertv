@@ -9,6 +9,11 @@ class Local {
 
   constructor({web3}) {
     this.web3 = web3;
+    this.last = {
+      txHash: null,
+      blockNumber: null,
+      contractAddress: null
+    }
   }
 
   contractName(source) {
@@ -25,13 +30,41 @@ class Local {
   opcodes(source) {
     var contractSource;
     if(this.contractName(source)) {
-      contractSource = source;
-    } else {
-      contractSource = fs.readFileSync(source, 'utf8');
-    }
+      contractSource = source; }
+    else {
+      contractSource = fs.readFileSync(source, 'utf8'); }
     var compiled = solc.compile(contractSource);
     var contractName = this.contractName(contractSource);
     return compiled["contracts"][`:${contractName}`]["opcodes"];
+  }
+
+  abi(source) {
+    var contractSource;
+    if(this.contractName(source)) {
+      contractSource = source; }
+    else {
+      contractSource = fs.readFileSync(source, 'utf8'); }
+    var compiled = solc.compile(contractSource);
+    var contractName = this.contractName(contractSource);
+    return JSON.parse(compiled["contracts"][`:${contractName}`]["interface"]);
+  }
+
+  contract(source) {
+    var contractSource;
+    if(this.contractName(source)) {
+      contractSource = source; }
+    else {
+      contractSource = fs.readFileSync(source, 'utf8'); }
+    return this.web3.eth.contract(this.abi(contractSource));
+  }
+
+  deployed(source, address) {
+    var contractSource;
+    if(this.contractName(source)) {
+      contractSource = source; }
+    else {
+      contractSource = fs.readFileSync(source, 'utf8'); }
+    return this.contract(contractSource).at(address);
   }
 
   etherBalance(contract) {
@@ -49,13 +82,15 @@ class Local {
     }
   }
 
-  createContract(source, params=[], options={}) {
+  // Async Calls
+  deployContract(source, params=[], options={}) {
+    var renderContext = this;
     var contractSource;
     if(this.contractName(source)) {
-      contractSource = source;
-    } else {
-      contractSource = fs.readFileSync(source, 'utf8');
-    }
+      contractSource = source; }
+    else {
+      contractSource = fs.readFileSync(source, 'utf8'); }
+
     var compiled = solc.compile(contractSource)
     var contractName = this.contractName(contractSource)
     var bytecode = compiled["contracts"][`:${contractName}`]["bytecode"]
@@ -71,10 +106,10 @@ class Local {
         if(!loggingSentinel) {
           loggingSentinel = true;
         } else {
-          console.log("...")
-          console.log(chalk.green(`deployed contract ${contractName}`))
-          console.log(chalk.green(`Transaction Hash: ${result.transactionHash}`))
-          console.log(chalk.green(`Contract Address: ${result.address}`))
+          console.log(chalk.green(`Deploying Contract ${chalk.underline(contractName)} | Transaction Hash: ${chalk.underline(result.transactionHash)}`))
+          console.log(chalk.green(`Contract Address: ${chalk.underline(result.address)}`))
+          renderContext.last = {
+            txHash: result.transactionHash, blockNumber: result.blockNumber, contractAddress: result.address }
         }
       }
     }
@@ -85,8 +120,7 @@ class Local {
       gasPrice: this.web3.eth.gasPrice
     }
 
-    var deployed = contract.new(...params, Object.assign(tx, options), callback)
-    return deployed
+    contract.new(...params, Object.assign(tx, options), callback)
   }
 
 }

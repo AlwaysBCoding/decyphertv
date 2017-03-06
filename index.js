@@ -18,7 +18,6 @@ switch(program.mode) {
     global.EthUtil = require('ethereumjs-util');
     global.fs = require("fs");
     global.Web3 = require("web3");
-    global.lodash = require("lodash");
     global.SolidityFunction = require("web3/lib/web3/function");
     global.web3 = new Web3(new Web3.providers.HttpProvider(`${program.endpoint}`))
     global.acct1 = web3.eth.accounts[0];
@@ -43,7 +42,6 @@ switch(program.mode) {
       global.EthUtil = require('ethereumjs-util');
       global.fs = require("fs");
       global.Web3 = require("web3");
-      global.lodash = require("lodash");
       global.SolidityFunction = require("web3/lib/web3/function");
       global.web3 = new Web3(new Web3.providers.HttpProvider(`${program.endpoint}`))
 

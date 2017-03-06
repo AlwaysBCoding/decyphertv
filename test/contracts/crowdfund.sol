@@ -11,10 +11,14 @@ contract crowdfund {
 
   Funder[] funders;
 
-  function CrowdFund(address _beneficiary, uint256 _goal, uint256 _timelimit) {
+  function crowdfund(address _beneficiary, uint256 _goal, uint256 _timelimit) {
     beneficiary = _beneficiary;
     goal = _goal;
     deadline = now + _timelimit;
+  }
+
+  function getBeneficiary() constant returns (address) {
+    return beneficiary;
   }
 
   function contribute() payable {
