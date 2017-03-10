@@ -1,7 +1,3 @@
-// PKey: cf1115666c7059f3140f10f815a452e313dce2eeae139e08127fdab0a88cb647
-// To: 0xee82ddb350f48dd5712d54072172aa1a97c677c8
-// Contract Address: 0x917ce96b00369b80b0f268807c4ee18cf5ae5374
-
 var chalk = require("chalk");
 var solc = require("solc");
 var EthTx = require("ethereumjs-tx");
@@ -256,78 +252,7 @@ class Remote {
 
     this.web3.eth.sendRawTransaction(`0x${txData}`, callback)
   }
-
-  // var callContract = (deployed, methodName, params=[], options={}) => {
-  //   var solidityFunction = new SolidityFunction('', lodash.find(deployed.abi, { name: methodName }), '')
-  //   var payloadData = solidityFunction.toPayload(params).data
-  //
-  //   console.log(payloadData)
-  //
-  //   var callback = (error, txHash) => {
-  //     if(error) {
-  //       console.log(chalk.red("Error Calling Contract"))
-  //       console.log(error)
-  //     } else {
-  //       console.log("...")
-  //       console.log(chalk.green(`Completed Contract Call`))
-  //       console.log(chalk.yellow(`TX: ${txHash}`))
-  //     }
-  //   }
-  //
-  //   var rawTx = {
-  //     nonce: web3.toHex(web3.eth.getTransactionCount(decypher.acct)),
-  //     gasPrice: web3.toHex(options.gasPrice || web3.eth.gasPrice),
-  //     gasLimit: web3.toHex(options.gas || 300000),
-  //     to: deployed.address,
-  //     from: decypher.acct,
-  //     data: payloadData
-  //   }
-  //
-  //   var tx = new EthTx(rawTx)
-  //   tx.sign(decypher.privateKeyx)
-  //   var txData = tx.serialize().toString('hex')
-  //
-  //   web3.eth.sendRawTransaction(`0x${txData}`, callback)
-  //
-  //   return true
-  // }
-
-  // callContract(deployed, "newNode", [decypher.acct, "Washington", 0], {gas: 3000000})
-
-  // cx() {
-  //   var deployed = arguments['0'].deployed
-  //   var methodName  = arguments['0'].methodName
-  //
-  //   var args = [...arguments]; var params = args.slice(1, args.length);
-  //   var solidityFunction = new global.SolidityFunction('', lodash.find(deployed.abi, { name: methodName }), '')
-  //   var payloadData = solidityFunction.toPayload(params).data
-  //
-  //   var rawTx = {
-  //     nonce: global.web3.toHex(global.web3.eth.getTransactionCount(global.decypher.acct)),
-  //     gasPrice: global.web3.toHex(arguments['0'].gasPrice || global.web3.eth.gasPrice),
-  //     gasLimit: global.web3.toHex(arguments['0'].gas || 300000),
-  //     to: deployed.address,
-  //     from: global.decypher.acct,
-  //     data: payloadData
-  //   }
-  //
-  //   var tx = new global.EthTx(rawTx)
-  //   tx.sign(global.decypher.privateKeyx)
-  //   var txData = tx.serialize().toString('hex')
-  //
-  //   global.web3.eth.sendRawTransaction(`0x${txData}`, (error, txHash) => {
-  //     if(error) {
-  //       console.log(chalk.red(`Error Sending Transaction...`))
-  //       console.log(error)
-  //     } else {
-  //       console.log(chalk.cyan(`Sent Transaction...`))
-  //       console.log(txHash)
-  //     }
-  //   })
-  //
-  //   return true
-  // }
-
+  
 }
 
 module.exports = Remote

@@ -65,16 +65,18 @@ decypher.etherBalance(contract|account)
 All contract calls take an optional final parameter of an options hash that can override the defaults
 
 ```javascript
+// Function Signature
 decypher.sendEther({to, value}, options={})
-===========================================
 
+// Example Usage
 decypher.sendEther({to: "0xC46CDe805aCC8e7507E53E36486C7D8600559d65", value: web3.toWei(1, 'ether')}, {gas: 21000})
 ```
 
 ```javascript
+// Function Signature
 decypher.deployContract(source, params=[], options={})
-======================================================
 
+// Example Usage
 var source = `contract HelloWorld {
   string public message;
   
@@ -87,9 +89,10 @@ decypher.deployContract(source, ["Hello, World!"], {gas: 500000})
 ```
 
 ```javascript
+// Function Signature
 decypher.callContract(deployed, methodName, params=[], options={})
-==================================================================
 
+// Example Usage
 var source = `contract HelloWorld {
   string public message;
   
