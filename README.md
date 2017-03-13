@@ -20,8 +20,8 @@ There are two modes. Local and Remote. Local assumes that you are running your o
 
 ## Start Shell (Local)
 To start a shell that is connected to a local node. Pass the flags -m local and -e endpoint where endpoint is the URL of the node  
-`$ decypher -m remote -e ${endpoint}`  
-`$ decypher -m remote -e http://localhost:8545`
+`$ decypher -m local -e ${endpoint}`  
+`$ decypher -m local -e http://localhost:8545`
 
 ## Start Shell (Remote)
 To start a shell that is connected to a remote node. Pass the flags -m remote and -e endpoint where endpoint is the URL of the node  
@@ -79,7 +79,7 @@ decypher.deployContract(source, params=[], options={})
 // Example Usage
 var source = `contract HelloWorld {
   string public message;
-  
+
   function HelloWorld(string _message) {
     message = _message;
   }
@@ -95,21 +95,37 @@ decypher.callContract(deployed, methodName, params=[], options={})
 // Example Usage
 var source = `contract HelloWorld {
   string public message;
-  
+
   function HelloWorld(string _message) {
     message = _message;
   }
-  
+
   function updateMessage(string _message) {
   	message = _message;
   }
-  
+
 }`
 
 var deployed = decypher.deployed(source, "0xC46CDe805aCC8e7507E53E36486C7D8600559d65")
 
 decypher.callContract(deployed, "updateMessage", ["New Message!!"], {gas: 500000})
 ```
+
+## decypher.last
+The CLI will do it's best to automatically store recently returned data in the `decypher.last` object. For example, whenever you deploy a contract the address it ultimately deploys to will be automatically stored for quick referene at `decypher.last.contractAddress` Return values the CLI will try to resolve are:
+
+```javascript
+decypher.last.contractAddress
+```
+
+```javascript
+decypher.last.txHash
+```
+
+```javascript
+decypher.last.blockNumber
+```
+
 
 ## Tests
 

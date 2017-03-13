@@ -53,6 +53,6 @@ switch(program.mode) {
     break;
 
     default:
-      console.log(chalk.red(`Unknown Mode: '${decypher.program.mode}' - Valid modes are [testrpc, ropsten]`))
+      console.log(chalk.red(`Unknown Mode: '${decypher.program.mode}' - Valid modes are [local, remote]`))
       break;
 }
