@@ -134,7 +134,7 @@ class Remote {
       from: this.acct,
       to: to,
       value: web3.toHex(value),
-      gasLimit: web3.toHex(21000),
+      gasLimit: web3.toHex(options.gas || 21000),
       gasPrice: this.web3.toHex(options.gasPrice || this.web3.eth.gasPrice)
     }
 
@@ -252,7 +252,7 @@ class Remote {
 
     this.web3.eth.sendRawTransaction(`0x${txData}`, callback)
   }
-  
+
 }
 
 module.exports = Remote
