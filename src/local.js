@@ -71,7 +71,7 @@ class Local {
     switch(typeof(contract)) {
       case "object":
         if(contract.address) {
-          return this.web3.fromWei(ths.web3.eth.getBalance(contract.address), 'ether').toNumber();
+          return this.web3.fromWei(this.web3.eth.getBalance(contract.address), 'ether').toNumber();
         } else {
           return new Error("cannot call getEtherBalance on an object that does not have a property 'address'");
         }
